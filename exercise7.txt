@@ -1,0 +1,166 @@
+==========Q1:(i) What do different columns in the output of EXPLAIN mean? ==========
+
+id
+MEANING: tells designer which SELECT in the analysed statement the EXPLAIN output is referring to.
+
+select_type
+MEANING: categorizes all SELECTs referred to by the output row.
+
+table
+MEANING: is the name of the table to which the information in the row applies. The order of the tables indicates the order in which MySQL will 		read the tables to process the query. This is not necessary the order in which you name them in the FROM clause, because the optimizer 		attempts to determine which order will result in the most efficient processing.
+
+type
+MEANING: indicates the join type
+
+possible_keys
+MEANING: indicates which of the table's indexes MySQL considers to be candidates for identifying rows that satisfy the query
+
+key
+MEANING: indicates the optimizer's decision about which of the candidate indexes listed in possible_keys will yield most efficient query 		execution. If the key value is NULL, it means no index was chosen. This might happen either because there were no candidate or because 		the optimizer believes it will be just as fast to scan the table rows as to use any of the possible indexes
+
+key_len
+MEANING: indicates how many bytes of index rows are used
+
+ref
+MEANING:  indicates which indexed column or columns are used to choose rows from the table
+
+rows
+MEANING: is the optimizer's estimate of how many rows from the table it will need to examine
+
+Extra
+MEANING: provides other information about the join. The Extra column of EXPLAIN output provides additional information about how a table is 		processed.
+
+
+==========Q1:(ii) What possible values can those have?==========
+==========Q1:(iii) What is the meaning of those values?==========
+
+'select_type' 
+POSSIBLE VALUES: 
+		SIMPLE (this is a simple SELECT statement involving no subqueries or unions), 
+		PRIMARY (the outer SELECT), 
+		UNION (the second or later SELECT in a union), 
+		DEPENDENT UNION (the second or later SELECT in a union that is dependent on the outer query), 
+		UNION RESULT (the result of a union), 
+		SUBQUERY (the first SELECT in a subquery), 
+		DEPENDENT SUBQUERY (the first SELECT in a subquery that is dependent on the outer query), 
+		DERIVED (subquery in the FROM clause)
+
+'type'
+POSSIBLE VALUES: 
+		system (the table has exactly one row)
+		const (the table has exactly one matching row. This is similar to system, except that the table may have other non-matching rows.)
+		eq_ref (exactly one row is read from the table for each combination of rows from the tables listed by EXPLAIN.)
+		ref (several rows may be read from the table for each combination of rows from the tables listed by EXPLAIN.)
+		ref_or_null (similar to ref, but MySQL also looks for rows that contain NULL)
+		index_merge (MySQL uses an index merge algorithm)
+		unique_subquery (similar to ref, but used for IN subqueries that select from the primary key column of a single table)
+		index_subquery (similar to unique_subquery, but used for IN subqueries that select from an indexed column of a single table)
+		range (the index is used to select rows that fall within a given range of index values. E.g; id < 10)
+		index (MySQL perform a full scan, but it scans the index rather than the data rows)
+		ALL (a full table scan of all data rows.)
+
+'Extra'
+POSSIBLE VALUES:
+		Using index: MySQL can optimize the query by reading values from the index without having to read the corresponding data rows. 
+		Where used: MySQL uses a WHERE clause to identify rows that satisfy the query.
+		Distinct: MySQL reads a single row from the table for each combination of rows from the tables listed in EXPLAIN output.
+		Not exists: MySQL can perform a LEFT JOIN "missing rows" optimization that quickly eliminates rows from consideration.
+
+
+========2.1 The value under 'rows' column in the output of EXPLAIN query and SELECT query after it are same. What does it mean?==========
+
+Recall that row is the optimizer's estimate of how many rows from the table it will need to examine. After executing the SELECT query and have the result is the same, it simply means that the query went from the very beginning of the table to the end (full-table scan).
+
+
+=========2.2 Is the SELECT query optimal? If no, how do we optimize it?=========
+This query is not optimal and can be optimised by indexing the user_id
+
+==========
+3.1 We decide to index columns in comments table to optimize the SELECT query. What column(s) will you index in which order? Ask the exercise creator for a hint if you are confused.
+==========
+I do recommend indexing columns use_id followed by commentable_id. In that order.
+
+==========
+Q4:4.1 EXPLAIN a SELECT query against one of your databases which employs an INNER JOIN between two tables. What does the output look like? What does the values under different columns mean? Do you get only one row in EXPLAIN's output?
+==========
+
+mysql> EXPLAIN SELECT title FROM Articles INNER JOIN Users ON user_id = Users.id WHERE name = 'User3' ORDER BY title DESC;
++----+-------------+----------+------+---------------+---------+---------+--------------------+------+----------------------------------------------+
+| id | select_type | table    | type | possible_keys | key     | key_len | ref                | rows |Extra                                        |
++----+-------------+----------+------+---------------+---------+---------+--------------------+------+----------------------------------------------+
+|  1 | SIMPLE      | Users    | ALL  | PRIMARY       | NULL    | NULL    | NULL               |   15 | Using where; Using temporary; Using filesort |
+|  1 | SIMPLE      | Articles | ref  | user_id       | user_id | 4       | exercise3.Users.id |    1 |                                              |
++----+-------------+----------+------+---------------+---------+---------+--------------------+------+----------------------------------------------+
+2 rows in set (0.00 sec)
+
+
+id: EXPLAIN output refers to one SELECT
+select_type: indicates a SIMPLE SELECT statement with no subqueries or unions
+table: information in the row applies to table Users (row 1) and table Articles (row 2)
+type: row1 (ALL - a full table scan of all data rows ), row2 (ref -several rows may be read from the table for each combination of rows)
+possible_keys: Row1 (considered candidate for Primary Key), Row 2 (candidate key, user_id) 
+key: row 2 (user_id as key)
+key_len: 4 bits of index row are used.
+ref: user_id column is used to choose rows from the table
+rows: optimised rows to run in order to complete query is 16 rows
+
+No, EXPLAIN output produced two rows.
+
+
+====================
+4.2 Form the same select query in above question using a subquery instead of a JOIN. What does the EXPLAIN output look like now? Which query is better and why?
+====================
+mysql> EXPLAIN SELECT title FROM Articles WHERE Articles.user_id IN ( SELECT Users.id FROM Users WHERE Users.name = 'User3') ORDER BY title DESC;
++----+--------------------+----------+-----------------+---------------+---------+---------+------+------+-----------------------------+
+| id | select_type        | table    | type            | possible_keys | key     | key_len | ref  | rows | Extra                       |
++----+--------------------+----------+-----------------+---------------+---------+---------+------+------+-----------------------------+
+|  1 | PRIMARY            | Articles | ALL             | NULL          | NULL    | NULL    | NULL |   16 | Using where; Using filesort |
+|  2 | DEPENDENT SUBQUERY | Users    | unique_subquery | PRIMARY       | PRIMARY | 4       | func |    1 | Using where                 |
++----+--------------------+----------+-----------------+---------------+---------+---------+------+------+-----------------------------+
+2 rows in set (0.00 sec)
+
+INNER JOIN query is better than the subquery beacuse the EXPLAIN output refers to 2 separate IDs even though they both have 2 rows.
+The rows sum is 17 for subquery against 16 for INNER JOIN.
+This makes INNER JOIN query faster.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
