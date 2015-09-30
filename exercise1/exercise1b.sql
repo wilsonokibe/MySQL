@@ -10,7 +10,8 @@ CREATE TABLE Holdings (
   branch VARCHAR(2) NOT NULL,
   title VARCHAR(20) NOT NULL,
   copies int(11),
-  PRIMARY KEY (title)
+  FOREIGN KEY (title) REFERENCES Titles (title),
+  FOREIGN KEY (branch) REFERENCES Branch (bcode)
 );
 
 CREATE TABLE Titles (
