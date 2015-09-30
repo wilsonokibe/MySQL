@@ -1,11 +1,11 @@
 --Exercise 6: Email campaign Data exerciseWe ran a campaign on a website, asking people to submit their email address, their city and phone number.The data was collected in a csv format - The file is here... http://dl.dropbox.com/u/628209/exercises/mysql/email_subscribers.txtFirst import this csv data into a mysql datbase.
 
 CREATE TABLE Email_data(
-	id INT UNSIGNED NOT NULL AUTO_INCREMENT, 
-	email VARCHAR(40) NOT NULL, 
-	phone VARCHAR(20) NOT NULL, 
-	city VARCHAR(20) NOT NULL, 
-	PRIMARY KEY (id)
+  id INT UNSIGNED NOT NULL AUTO_INCREMENT, 
+  email VARCHAR(40) NOT NULL, 
+  phone VARCHAR(20) NOT NULL, 
+  city VARCHAR(20) NOT NULL, 
+  PRIMARY KEY (id)
 ); 
 
 LOAD DATA LOCAL INFILE 'table1.csv' 
