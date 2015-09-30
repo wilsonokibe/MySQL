@@ -124,10 +124,21 @@ ORDER BY title;
 
 -- query with Users name = 'User3'
 SELECT title AS 'Article', comment AS 'Comments'  
-FROM (SELECT * FROM Articles) A LEFT JOIN (SELECT * FROM Comments ) C 
+FROM (
+	SELECT * 
+	FROM Articles
+	) A 
+	LEFT JOIN (
+		SELECT * 
+		FROM Comments 
+		) C 
 ON C.article_id = A.id 
 WHERE A.user_id 
-IN (SELECT id FROM Users WHERE name = 'User3') 
+IN (
+	SELECT id 
+	FROM Users 
+	WHERE name = 'User3'
+	) 
 ORDER BY title;
 
 
@@ -142,7 +153,10 @@ WHERE Comments.comment IS NULL;
 SELECT title  
 FROM Articles 
 WHERE id NOT 
-IN (SELECT article_id FROM Comments);
+IN (
+	SELECT article_id 
+	FROM Comments
+	);
 
 --Write a query to select article which has maximum comments
 SELECT title, COUNT(article_id) AS 'comments' 

@@ -4,31 +4,31 @@ CREATE DATABASE exercise3;
 USE exercise3;
 
 CREATE TABLE Categories (
- id INT UNSIGNED NOT NULL AUTO_INCREMENT, 
- category VARCHAR(50),
- PRIMARY KEY (id)
+	id INT UNSIGNED NOT NULL AUTO_INCREMENT, 
+	category VARCHAR(50),
+	PRIMARY KEY (id)
 );
 
 CREATE TABLE Users (
- id INT UNSIGNED NOT NULL AUTO_INCREMENT,
- type VARCHAR(20) DEFAULT 'normal',
- name VARCHAR(40),
- PRIMARY KEY (id)
+	id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+	type VARCHAR(20) DEFAULT 'normal',
+	name VARCHAR(40),
+	PRIMARY KEY (id)
 );
 
 CREATE TABLE Comments (
- user_id INT UNSIGNED NOT NULL,
- comment TEXT,
- FOREIGN KEY (user_id) REFERENCES Users (id)
+	user_id INT UNSIGNED NOT NULL,
+	comment TEXT,
+	FOREIGN KEY (user_id) REFERENCES Users (id)
 );
 
 CREATE TABLE Articles (
- id INT UNSIGNED NOT NULL AUTO_INCREMENT,
- user_id INT UNSIGNED NOT NULL,
- category_id INT UNSIGNED NOT NULL,
- FOREIGN KEY (user_id) REFERENCES Users (id),
- FOREIGN KEY (category_id) REFERENCES Categories (id),
- PRIMARY KEY(id)
+	id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+	user_id INT UNSIGNED NOT NULL,
+	category_id INT UNSIGNED NOT NULL,
+	FOREIGN KEY (user_id) REFERENCES Users (id),
+	FOREIGN KEY (category_id) REFERENCES Categories (id),
+	PRIMARY KEY(id)
 );
 
 INSERT INTO Users (id, type, name) VALUES 
@@ -124,7 +124,7 @@ ORDER BY title;
 
 -- query with Users name = 'User3'
 SELECT title AS 'Article', comment AS 'Comments'  
-FROM ( SELECT * FROM Articles) A LEFT JOIN (SELECT * FROM Comments ) C 
+FROM (SELECT * FROM Articles) A LEFT JOIN (SELECT * FROM Comments ) C 
 ON C.article_id = A.id 
 WHERE A.user_id 
 IN (SELECT id FROM Users WHERE name = 'User3') 
