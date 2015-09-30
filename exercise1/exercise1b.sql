@@ -64,7 +64,6 @@ WHERE bcode IN (
 		WHERE author = 'Ann Brown')
 ); 
 
-
 --(iii) branches that hold any books by Ann Brown (without using a nested subquery). 
 SELECT bcode as 'branch-code', librarian, address 
 FROM Branch INNER JOIN Holdings INNER JOIN Titles 

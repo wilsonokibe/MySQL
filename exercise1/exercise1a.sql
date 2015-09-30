@@ -47,7 +47,6 @@ VALUES ('Brown','Turkey'),
 ('Green','Turkey'),
 ('Green','Cheese');
 
-
 --(i) places where Jones can eat (using a nested subquery). 
 SELECT location AS 'Where Jones can eat' 
 FROM Sandwitches 
