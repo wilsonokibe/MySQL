@@ -10,15 +10,13 @@ CREATE TABLE Holdings (
   branch VARCHAR(2) NOT NULL,
   title VARCHAR(20) NOT NULL,
   copies int(11),
-  PRIMARY KEY (title),
-  FOREIGN KEY (branch) REFERENCES Branch (bcode)
+  PRIMARY KEY (title)
 );
 
 CREATE TABLE Titles (
   title VARCHAR(20) NOT NULL,
   author VARCHAR(20),
-  publisher VARCHAR(20),
-  PRIMARY KEY (title)
+  publisher VARCHAR(20)
 );
 
 INSERT INTO Branch 
@@ -52,7 +50,7 @@ WHERE publisher = 'Macmillan';
 
 
 --(ii) branches that hold any books by Ann Brown (using a nested subquery). 
-SELECT bcode as 'branch-code', librarian, address 
+SELECT bcode as 'branch-code'
 FROM Branch 
 WHERE bcode IN (
   SELECT branch  
@@ -67,19 +65,19 @@ WHERE bcode IN (
 SELECT bcode as 'branch-code', librarian, address 
 FROM Branch INNER JOIN Holdings INNER JOIN Titles 
 ON bcode = branch 
-AND Holdings.title LIKE Titles.title 
+AND Holdings.title = Titles.title 
 AND Titles.author = 'Ann Brown'; 
 
 --Alternatively:
 SELECT bcode as 'branch-code', librarian, address  
 FROM Branch INNER JOIN Holdings INNER JOIN Titles 
 ON bcode = branch 
-AND Holdings.title LIKE Titles.title 
+AND Holdings.title = Titles.title 
 AND Titles.author = 'Ann Brown' 
 GROUP BY bcode; 
 
 --(iv) the total number of books held at each branch. 
-SELECT Distinct branch, SUM(copies) AS 'Number of Books'
+SELECT branch, SUM(copies) AS 'Number of Books'
 FROM Holdings
 GROUP BY branch;
 
