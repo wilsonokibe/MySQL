@@ -27,12 +27,12 @@ VALUES ('B1','John Smith','2 Anglesea Rd'),
 
 INSERT INTO Holdings 
 VALUES ('B1','Susannah',3),
-('B1','How to',2),
-('B1','A hist',1),
+('B1','How to Fish',2),
+('B1','A History of Dublin',1),
 ('B2','How to',4),
 ('B2','Computers',2),
 ('B2','The Wife',3),
-('B3','A hist..',1),
+('B3','A History of Dublin',1),
 ('B3','Computers',4),
 ('B3','Susannah',3),
 ('B3','The Wife',1);
