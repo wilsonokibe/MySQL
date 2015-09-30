@@ -29,7 +29,7 @@ INSERT INTO Holdings
 VALUES ('B1','Susannah',3),
 ('B1','How to Fish',2),
 ('B1','A History of Dublin',1),
-('B2','How to',4),
+('B2','How to Fish',4),
 ('B2','Computers',2),
 ('B2','The Wife',3),
 ('B3','A History of Dublin',1),
