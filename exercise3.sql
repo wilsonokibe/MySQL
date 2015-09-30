@@ -174,6 +174,17 @@ GROUP BY article_id
 ORDER BY comments DESC 
 LIMIT 1;
 
+--ALternativeley
+SELECT title, MAX(comments) 
+FROM (
+  SELECT title, COUNT(article_id) AS 'comments' 
+  FROM Comments RIGHT JOIN Articles 
+  ON article_id=Comments.id 
+  GROUP BY article_id 
+  ORDER BY comments DESC 
+  ) 
+AS COUNTER;
+
 --(v) Write a query to select article which does not have more than one comment by the same user ( do this using left join and group by )
 SELECT title 
 FROM Articles LEFT JOIN Comments 

@@ -13,27 +13,38 @@ INTO TABLE Email_data FIELDS TERMINATED BY ','
 ENCLOSED BY '"' (email, phone, city); 
 
 --From the database, we need to find the following information by writing a single sql statement for each
---What all cities did people respond from
+--(i) What all cities did people respond from
 SELECT DISTINCT city 
 FROM Email_data;
 
---How many people responded from each city
-SELECT DISTINCT city, COUNT(city) 
+--(ii) How many people responded from each city
+SELECT city, COUNT(city) 
 FROM Email_data 
 GROUP BY city;  
 
---Which city were the maximum respondents from?
+--(iii) Which city were the maximum respondents from?
 SELECT city, COUNT(city) AS 'MOST' 
 FROM Email_data 
 GROUP BY city 
 ORDER BY MOST DESC 
 LIMIT 1; 
 
---What all email domains did people respond from ?
+--Alternatively:
+SELECT city, MAX(MOST) 
+FROM (
+  SELECT city, COUNT(city) AS 'MOST'  
+  FROM Email_data  
+  GROUP BY city  
+  ORDER BY MOST 
+  DESC
+  ) 
+AS COUNTER;
+
+--(iv) What all email domains did people respond from ?
 SELECT DISTINCT (SUBSTRING_INDEX(SUBSTR(email, INSTR(email, '@') + 1),'.',1)) AS 'Email Domains' 
 FROM Email_data; 
 
---Which is the most popular email domain among the respondents ?
+--(v) Which is the most popular email domain among the respondents ?
 SELECT (SUBSTRING_INDEX(SUBSTR(email, INSTR(email, '@') + 1),'.',1)) AS 'domain', 
 COUNT((SUBSTRING_INDEX(SUBSTR(email, INSTR(email, '@') + 1),'.',1))) AS 'Most' 
 FROM Email_data 
