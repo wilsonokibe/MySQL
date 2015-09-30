@@ -44,6 +44,11 @@ AS COUNTER;
 SELECT DISTINCT (SUBSTRING_INDEX(SUBSTR(email, INSTR(email, '@') + 1),'.',1)) AS 'Email Domains' 
 FROM Email_data; 
 
+--Alternative:
+SELECT DISTINCT SUBSTRING_INDEX (SUBSTRING_INDEX(email, '@', -1), '.', 1) 
+FROM Email_data;
+
+
 --(v) Which is the most popular email domain among the respondents ?
 SELECT (SUBSTRING_INDEX(SUBSTR(email, INSTR(email, '@') + 1),'.',1)) AS 'domain', 
 COUNT((SUBSTRING_INDEX(SUBSTR(email, INSTR(email, '@') + 1),'.',1))) AS 'Most' 
@@ -51,6 +56,17 @@ FROM Email_data
 GROUP BY (SUBSTRING_INDEX(SUBSTR(email, INSTR(email, '@') + 1),'.',1)) 
 ORDER BY Most DESC 
 LIMIT 2; 
+
+--Alternative:
+SELECT domain, MAX(most)  
+FROM ( 
+  SELECT (SUBSTRING_INDEX (SUBSTRING_INDEX(email, '@', -1), '.', 1)) AS 'domain',  
+  COUNT((SUBSTRING_INDEX (SUBSTRING_INDEX(email, '@', -1), '.', 1))) AS 'Most'  
+  FROM Email_data  
+  GROUP BY (SUBSTRING_INDEX(SUBSTR(email, INSTR(email, '@') + 1),'.',1))  
+  ORDER BY Most DESC  
+  ) 
+AS COUNTER;
 
 
 
