@@ -45,7 +45,6 @@ VALUES ('Susannah','Ann Brown','Macmillan'),
 ('Computers','Blaise Pascal','Applewoods'),
 ('The Wife','Ann Brown','Macmillan');
 
-
 --(i) the names of all library books published by Macmillan. 
 SELECT title as 'Books published by Macmillan' 
 FROM Titles  
@@ -56,12 +55,12 @@ WHERE publisher = 'Macmillan';
 SELECT bcode as 'branch-code', librarian, address 
 FROM Branch 
 WHERE bcode IN (
-	SELECT branch  
-	FROM Holdings  
-	WHERE title IN ( 
-		SELECT title  
-		FROM Titles 
-		WHERE author = 'Ann Brown')
+  SELECT branch  
+  FROM Holdings  
+  WHERE title IN ( 
+    SELECT title  
+    FROM Titles 
+    WHERE author = 'Ann Brown')
 ); 
 
 --(iii) branches that hold any books by Ann Brown (without using a nested subquery). 
