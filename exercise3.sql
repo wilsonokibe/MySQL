@@ -83,7 +83,6 @@ INSERT INTO Comments (user_id, comment, article_id) VALUES
 (10, 'comment', 10 ), 
 (3, 'comment', 10 );
 
-
 --select all articles whose author's name is user3 (Do this exercise using variable also).
 SELECT title 
 FROM Articles INNER JOIN Users 
@@ -140,8 +139,6 @@ IN (
 	WHERE name = 'User3'
 	) 
 ORDER BY title;
-
-
 
 --Write a query to select all articles which do not have any comments (Do using subquery also)
 SELECT title 

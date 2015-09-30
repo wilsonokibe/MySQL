@@ -20,3 +20,4 @@ ADD last_name VARCHAR(10);
 
 ALTER TABLE testing_table 
 MODIFY roll_no INTEGER; 
+

@@ -13,7 +13,6 @@ INTO TABLE Email_data FIELDS TERMINATED BY ','
 ENCLOSED BY '"' (email, phone, city); 
 
 --From the database, we need to find the following information by writing a single sql statement for each
-
 --What all cities did people respond from
 SELECT DISTINCT city 
 FROM Email_data;
@@ -41,5 +40,6 @@ FROM Email_data
 GROUP BY (SUBSTRING_INDEX(SUBSTR(email, INSTR(email, '@') + 1),'.',1)) 
 ORDER BY Most DESC 
 LIMIT 2; 
+
 
 

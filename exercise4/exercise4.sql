@@ -7,3 +7,4 @@ CREATE DATABASE restored;
 mysql -h localhost -u root -p restored < exercises_backup.sql
 
 
+
