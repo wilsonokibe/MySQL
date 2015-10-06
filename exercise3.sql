@@ -17,6 +17,7 @@ CREATE TABLE Users (
 );
 
 CREATE TABLE Comments (
+  id INT UNSIGNED NOT NULL AUTO_INCREMENT,
   user_id INT UNSIGNED NOT NULL,
   comment TEXT,
   article_id INT UNSIGNED NOT NULL,
@@ -33,57 +34,57 @@ CREATE TABLE Articles (
   PRIMARY KEY(id)
 );
 
-INSERT INTO Users (id, type, name) VALUES 
-(DEFAULT, 'normal', 'Segun'), 
-(DEFAULT, 'normal', 'Wilson'),
-(DEFAULT, 'admin', 'Osifo'),
-(DEFAULT, 'normal', 'Daniel'),
-(DEFAULT, 'normal', 'Manish'),
-(DEFAULT, 'normal', 'Ayo'),
-(DEFAULT, 'normal', 'Remy'),
-(DEFAULT, 'normal', 'Ugo'),
-(DEFAULT, 'normal', 'Neima'),
-(DEFAULT, 'normal', 'Henry');
+INSERT INTO Users (type, name) VALUES 
+('normal', 'Segun'), 
+('normal', 'Wilson'),
+('admin', 'Osifo'),
+('normal', 'Daniel'),
+('normal', 'Manish'),
+('normal', 'Ayo'),
+('normal', 'Remy'),
+('normal', 'Ugo'),
+('normal', 'Neima'),
+('normal', 'Henry');
 
-INSERT INTO Categories (id, category) VALUES
-(DEFAULT, 'Arts and Entertainment'),
-(DEFAULT, 'Sports'),
-(DEFAULT, 'Travel and Tour'),
-(DEFAULT, 'Philosophy and Religion'),
-(DEFAULT, 'Finance and Business'),
-(DEFAULT, 'Education and Communication'),
-(DEFAULT, 'Health'),
-(DEFAULT, 'Family'),
-(DEFAULT, 'Personal Care and Craft'),
-(DEFAULT, 'Youth');
+INSERT INTO Categories (category) VALUES
+('Arts and Entertainment'),
+('Sports'),
+('Travel and Tour'),
+('Philosophy and Religion'),
+('Finance and Business'),
+('Education and Communication'),
+('Health'),
+('Family'),
+('Personal Care and Craft'),
+('Youth');
 
-INSERT INTO Articles (id, user_id, category_id, title) VALUES
-(DEFAULT, 9, 5, 'An Ambush at Noon'),
-(DEFAULT, 2, 4, 'My American Dream is Happiness in Marriage'),
-(DEFAULT, 5, 10, 'Empowering the African Woman'),
-(DEFAULT, 10, 8, 'Oce Upon A Beginning'),
-(DEFAULT, 7, 6, 'Stop Living in Fool\'s Paradise'),
-(DEFAULT, 1, 6, 'A Literary Window on Economists'),
-(DEFAULT, 6, 2, 'Rangers Fight Back to Beat Kwara United 2-1 in Enugu'),
-(DEFAULT, 3, 2,  '4 Great Arsenal Champions League Moments vs. Greek Sides'),
-(DEFAULT, 4, 2, 'Arsene Wenger Responds to Jose Mourinho\'s Claims About Treatment from FA'),
-(DEFAULT, 8, 2, 'Barca star Neymar accused of evading taxes');
+INSERT INTO Articles (user_id, category_id, title) VALUES
+(9, 5, 'An Ambush at Noon'),
+(2, 4, 'My American Dream is Happiness in Marriage'),
+(5, 10, 'Empowering the African Woman'),
+(10, 8, 'Oce Upon A Beginning'),
+(7, 6, 'Stop Living in Fool\'s Paradise'),
+(1, 6, 'A Literary Window on Economists'),
+(6, 2, 'Rangers Fight Back to Beat Kwara United 2-1 in Enugu'),
+(3, 2,  '4 Great Arsenal Champions League Moments vs. Greek Sides'),
+(4, 2, 'Arsene Wenger Responds to Jose Mourinho\'s Claims About Treatment from FA'),
+(8, 2, 'Barca star Neymar accused of evading taxes');
 
-INSERT INTO Comments (id, user_id, comment, article_id) VALUES 
-(DEFAULT, 2, 'comment 1', 1),
-(DEFAULT, 2, 'comment 2', 3), 
-(DEFAULT, 2, 'comment 2', 4), 
-(DEFAULT, 3, 'comment 3', 9), 
-(DEFAULT, 5, 'comment 5', 5), 
-(DEFAULT, 5, 'comment 6', 10), 
-(DEFAULT, 5, 'comment 6', 8), 
-(DEFAULT, 9, 'comment 6', 8), 
-(DEFAULT, 4, 'comment 6', 8), 
-(DEFAULT, 1, 'comment', 10 ), 
-(DEFAULT, 7, 'comment', 10 ), 
-(DEFAULT, 10, 'comment', 10 ), 
-(DEFAULT, 10, 'comment', 10 ), 
-(DEFAULT, 3, 'comment', 10 );
+INSERT INTO Comments (user_id, comment, article_id) VALUES 
+(2, 'comment 1', 1),
+(2, 'comment 2', 3), 
+(2, 'comment 2', 4), 
+(3, 'comment 3', 9), 
+(5, 'comment 5', 5), 
+(5, 'comment 6', 10), 
+(5, 'comment 6', 8), 
+(9, 'comment 6', 8), 
+(4, 'comment 6', 8), 
+(1, 'comment', 10 ), 
+(7, 'comment', 10 ), 
+(10, 'comment', 10 ), 
+(10, 'comment', 10 ), 
+(3, 'comment', 10 );
 
 --(i)select all articles whose author's name is user3 (Do this exercise using variable also).
 SELECT title 
@@ -93,63 +94,40 @@ WHERE name = 'User3'
 ORDER BY title DESC;
 
 --Using variable:
+SET @user_name = (
+  SELECT name 
+  FROM Users 
+  WHERE name = 'User3'
+);
+
 SELECT title 
-FROM Articles INNER JOIN Users 
+FROM Articles INNER JOIN Users  
 ON user_id = Users.id 
-WHERE name = (
-    SELECT name 
-    FROM Users 
-    WHERE name = 'User3'
-    )
-ORDER BY title DESC;
+WHERE name = @user_name;
 
 
 --(ii) For all the articles being selected above, select all the articles and also the comments associated with those articles in a single query (Do this using subquery also)
-SELECT title AS 'Article', comment AS 'Comments' 
-FROM Articles INNER JOIN Comments 
-ON Articles.id = article_id 
-ORDER BY title;
+--Without SubQuery--
+SELECT a.title AS 'Article', c.comment AS 'Comments'  
+FROM Articles a INNER JOIN Users u 
+ON a.user_id = u.id INNER JOIN Comments c 
+ON c.article_id = a.id WHERE u.name = 'User3';
 
--- query with Users name = 'User3'
-SELECT title AS 'Article', comment AS 'Comments'  
-FROM Articles LEFT JOIN Comments  
-ON Articles.id = article_id  
-WHERE Articles.user_id  
-IN (
-  SELECT id 
-  FROM Users 
-  WHERE name = (
-    SELECT name 
-    FROM Users 
-    WHERE name = 'User3'
-    )
-  )
-ORDER BY title;
-
---using subquery
-SELECT title AS 'Article', comment AS 'Comments' 
-FROM (SELECT * FROM Articles) A LEFT JOIN (SELECT * FROM Comments ) C
-ON C.article_id = A.id
-ORDER BY title;
-
--- query with Users name = 'User3'
-SELECT title AS 'Article', comment AS 'Comments'  
+--Using SubQuery--
+SELECT a1.title AS 'Title', c.comment AS 'Comment' 
 FROM (
-  SELECT * 
-  FROM Articles
-  ) A 
-  LEFT JOIN (
-    SELECT * 
-    FROM Comments 
-    ) C 
-ON C.article_id = A.id 
-WHERE A.user_id 
-IN (
-  SELECT id 
-  FROM Users 
-  WHERE name = 'User3'
+  (
+    SELECT title, a.user_id 
+    FROM Articles a INNER JOIN Users u 
+    ON user_id = u.id INNER JOIN Comments 
+    WHERE u.id = (
+      SELECT id 
+      FROM Users 
+      WHERE name = 'User3'
+    )
   ) 
-ORDER BY title;
+  a1) 
+JOIN Comments c Using(user_id);
 
 --(iii) Write a query to select all articles which do not have any comments (Do using subquery also)
 SELECT title 
@@ -167,23 +145,18 @@ IN (
   );
 
 --(iv) Write a query to select article which has maximum comments
-SELECT title, COUNT(article_id) AS 'comments' 
-FROM Comments RIGHT JOIN Articles 
-ON article_id=id 
+SELECT title, COUNT(article_id) AS comments
+FROM Comments c RIGHT JOIN Articles a
+ON c.article_id = a.id 
 GROUP BY article_id 
-ORDER BY comments DESC 
-LIMIT 1;
-
---ALternativeley
-SELECT title, MAX(comments) 
-FROM (
-  SELECT title, COUNT(article_id) AS 'comments' 
-  FROM Comments RIGHT JOIN Articles 
-  ON article_id=Comments.id 
-  GROUP BY article_id 
-  ORDER BY comments DESC 
-  ) 
-AS COUNTER;
+HAVING comments = (
+  SELECT COUNT(article_id) AS comments2
+  FROM Comments c1 RIGHT JOIN Articles a1
+  ON c1.article_id = a1.id 
+  GROUP BY article_id
+  ORDER BY comments2 DESC 
+  LIMIT 1 
+);
 
 --(v) Write a query to select article which does not have more than one comment by the same user ( do this using left join and group by )
 SELECT title 
