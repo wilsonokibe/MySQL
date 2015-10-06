@@ -23,22 +23,16 @@ FROM Email_data
 GROUP BY city;  
 
 --(iii) Which city were the maximum respondents from?
-SELECT city, COUNT(city) AS 'MOST' 
+SELECT city, COUNT(city) AS counter1 
 FROM Email_data 
 GROUP BY city 
-ORDER BY MOST DESC 
-LIMIT 1; 
-
---Alternatively:
-SELECT city, MAX(MOST) 
-FROM (
-  SELECT city, COUNT(city) AS 'MOST'  
-  FROM Email_data  
-  GROUP BY city  
-  ORDER BY MOST 
-  DESC
-  ) 
-AS COUNTER;
+HAVING counter1 = (
+  SELECT COUNT(city) AS counter2 
+  FROM Email_data 
+  GROUP BY city 
+  ORDER BY counter2 DESC 
+  LIMIT 1
+);
 
 --(iv) What all email domains did people respond from ?
 SELECT DISTINCT (SUBSTRING_INDEX(SUBSTR(email, INSTR(email, '@') + 1),'.',1)) AS 'Email Domains' 
@@ -50,23 +44,13 @@ FROM Email_data;
 
 
 --(v) Which is the most popular email domain among the respondents ?
-SELECT (SUBSTRING_INDEX(SUBSTR(email, INSTR(email, '@') + 1),'.',1)) AS 'domain', 
-COUNT((SUBSTRING_INDEX(SUBSTR(email, INSTR(email, '@') + 1),'.',1))) AS 'Most' 
-FROM Email_data 
-GROUP BY (SUBSTRING_INDEX(SUBSTR(email, INSTR(email, '@') + 1),'.',1)) 
-ORDER BY Most DESC 
-LIMIT 2; 
-
---Alternative:
-SELECT domain, MAX(most)  
-FROM ( 
-  SELECT (SUBSTRING_INDEX (SUBSTRING_INDEX(email, '@', -1), '.', 1)) AS 'domain',  
-  COUNT((SUBSTRING_INDEX (SUBSTRING_INDEX(email, '@', -1), '.', 1))) AS 'Most'  
-  FROM Email_data  
-  GROUP BY (SUBSTRING_INDEX(SUBSTR(email, INSTR(email, '@') + 1),'.',1))  
-  ORDER BY Most DESC  
-  ) 
-AS COUNTER;
-
-
-
+SELECT (SUBSTRING_INDEX(SUBSTR(email, INSTR(email, '@') + 1),'.',1)) AS 'domain', COUNT(*) as counter
+FROM Email_data
+GROUP BY (SUBSTRING_INDEX(SUBSTR(email, INSTR(email, '@') + 1),'.',1))
+HAVING counter = (
+  SELECT COUNT(*) AS counter2
+  FROM Email_data
+  GROUP BY (SUBSTRING_INDEX(SUBSTR(email, INSTR(email, '@') + 1),'.',1))
+  ORDER BY counter2 DESC
+  LIMIT 1
+);
