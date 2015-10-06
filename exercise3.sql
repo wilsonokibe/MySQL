@@ -94,16 +94,15 @@ WHERE name = 'User3'
 ORDER BY title DESC;
 
 --Using variable:
-SET @user_name = (
-  SELECT name 
+SET @user_id = (
+  SELECT id
   FROM Users 
   WHERE name = 'User3'
 );
 
 SELECT title 
-FROM Articles INNER JOIN Users  
-ON user_id = Users.id 
-WHERE name = @user_name;
+FROM Articles 
+WHERE Articles.user_id = @user_id;
 
 
 --(ii) For all the articles being selected above, select all the articles and also the comments associated with those articles in a single query (Do this using subquery also)
@@ -114,20 +113,17 @@ ON a.user_id = u.id INNER JOIN Comments c
 ON c.article_id = a.id WHERE u.name = 'User3';
 
 --Using SubQuery--
-SELECT a1.title AS 'Title', c.comment AS 'Comment' 
-FROM (
-  (
-    SELECT title, a.user_id 
-    FROM Articles a INNER JOIN Users u 
-    ON user_id = u.id INNER JOIN Comments 
-    WHERE u.id = (
-      SELECT id 
-      FROM Users 
-      WHERE name = 'User3'
-    )
-  ) 
-  a1) 
-JOIN Comments c Using(user_id);
+SELECT a.title AS 'Article', c.comment AS 'Comments'   
+FROM Articles a INNER JOIN Users u  
+ON a.user_id = u.id 
+INNER JOIN Comments c  
+ON c.article_id = a.id 
+WHERE a.user_id = (   
+  SELECT id    
+  FROM Users   
+  WHERE name = 'User3'   
+);
+
 
 --(iii) Write a query to select all articles which do not have any comments (Do using subquery also)
 SELECT title 
