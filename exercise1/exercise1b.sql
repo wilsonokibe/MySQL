@@ -59,10 +59,8 @@ WHERE title IN (
 );
 
 --(iii) branches that hold any books by Ann Brown (without using a nested subquery). 
-SELECT DISTINCT bcode as 'branch-code', librarian, address   
-FROM Branches b INNER JOIN Holdings h 
-ON b.bcode = h.branch 
-INNER JOIN Titles t 
+SELECT DISTINCT branch 
+FROM Holdings h INNER JOIN Titles t 
 ON h.title = t.title 
 AND t.author = 'Ann Brown';
 
