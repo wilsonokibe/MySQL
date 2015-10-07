@@ -35,22 +35,18 @@ HAVING counter1 = (
 );
 
 --(iv) What all email domains did people respond from ?
-SELECT DISTINCT (SUBSTRING_INDEX(SUBSTR(email, INSTR(email, '@') + 1),'.',1)) AS 'Email Domains' 
-FROM Email_data; 
-
---Alternative:
-SELECT DISTINCT SUBSTRING_INDEX (SUBSTRING_INDEX(email, '@', -1), '.', 1) 
+SELECT DISTINCT SUBSTRING_INDEX (SUBSTRING_INDEX(email, '@', -1), '.', 1) AS 'Email Domains' 
 FROM Email_data;
 
 
 --(v) Which is the most popular email domain among the respondents ?
-SELECT (SUBSTRING_INDEX(SUBSTR(email, INSTR(email, '@') + 1),'.',1)) AS 'domain', COUNT(*) as counter
+SELECT SUBSTRING_INDEX (SUBSTRING_INDEX(email, '@', -1), '.', 1) AS 'domain', COUNT(*) as counter
 FROM Email_data
-GROUP BY (SUBSTRING_INDEX(SUBSTR(email, INSTR(email, '@') + 1),'.',1))
+GROUP BY (SUBSTRING_INDEX (SUBSTRING_INDEX(email, '@', -1), '.', 1))
 HAVING counter = (
   SELECT COUNT(*) AS counter2
   FROM Email_data
-  GROUP BY (SUBSTRING_INDEX(SUBSTR(email, INSTR(email, '@') + 1),'.',1))
+  GROUP BY (SUBSTRING_INDEX (SUBSTRING_INDEX(email, '@', -1), '.', 1))
   ORDER BY counter2 DESC
   LIMIT 1
 );
